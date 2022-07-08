@@ -1268,7 +1268,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserData"
+                "$ref": "#/components/schemas/UserCreateData"
               }
             }
           }
@@ -1292,7 +1292,7 @@
                   "details": [
                     {
                       "name": "email",
-                      "value": "Content is not a valid e-mail address"
+                      "value": "'user@example.com' is not a valid e-mail address"
                     }
                   ],
                   "message": "Request invalid",
@@ -4739,13 +4739,29 @@
       },
       "UserData": {
         "type": "object",
-        "description": "Defines the content that can be provided when creating a user.",
+        "description": "Defines the content provided after creating a user.",
         "allOf": [
           {
             "$ref": "#/components/schemas/UserId"
           },
           {
             "$ref": "#/components/schemas/UserContent"
+          }
+        ]
+      },
+      "UserCreateData": {
+        "type": "object",
+        "description": "Defines the content that can be provided when creating a user.",
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "The password the user can use to login",
+            "example": "Donuts@123!"
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/UserData"
           }
         ]
       },
