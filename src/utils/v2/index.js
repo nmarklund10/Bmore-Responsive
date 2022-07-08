@@ -2,6 +2,7 @@
 
 import jwt from 'jsonwebtoken'
 import fs from 'fs'
+import complexity from 'complexity'
 import tls from 'tls'
 import { dirname } from 'path'
 import { SequelizeAdapter } from 'casbin-sequelize-adapter'
@@ -132,7 +133,7 @@ const authMiddleware = async (req, res, next) => {
   let authed = false
 
   if (process.env.BYPASS_LOGIN) {
-    // values in .env file are interpreted as strings, so you have to check
+    // values in .env file are interpreted as strings, so you have to check this way
     authed = process.env.BYPASS_LOGIN === 'true'
   } else {
     authed = await validateToken(req)
@@ -149,10 +150,29 @@ const authMiddleware = async (req, res, next) => {
   }
 }
 
+/**
+ * Checks the user's new password for complexity
+ *
+ * @param {String} pass
+ *
+ * @return {Boolean}
+ */
+const validatePassword = pass => {
+  const options = {
+    uppercase: 1,  // A through Z
+    lowercase: 1,  // a through z
+    special: 1,  // ! @ # $ & *
+    digit: 1,  // 0 through 9
+    min: 8,  // minumum number of characters
+  }
+  return complexity.check(pass, options)
+}
+
 export {
   formatTime,
   ErrorResponse,
   authMiddleware,
   getRoleEnforcer,
-  validateRoles
+  validateRoles,
+  validatePassword
 }
