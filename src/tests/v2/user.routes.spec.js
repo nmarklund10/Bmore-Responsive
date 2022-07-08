@@ -4,7 +4,6 @@ import randomWords from 'random-words'
 import jwt from 'jsonwebtoken'
 import app from '../..'
 import { Login } from '../../utils/login'
-import models from '../../models'
 
 const VERSION = '2'
 const { expect } = chai
