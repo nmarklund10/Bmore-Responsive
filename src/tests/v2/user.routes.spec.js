@@ -4,6 +4,7 @@ import randomWords from 'random-words'
 import jwt from 'jsonwebtoken'
 import app from '../..'
 import { Login } from '../../utils/login'
+import models from '../../models'
 
 const VERSION = '2'
 const { expect } = chai
@@ -16,9 +17,11 @@ describe(`User tests (v${VERSION})`, function() {
     await testUser.setToken()
     token = await testUser.getToken()
   })
+  afterEach(function() {
+    process.env.BYPASS_LOGIN = 'true'
+  })
   after(async function() {
     await testUser.destroyToken()
-    process.env.BYPASS_LOGIN = true
   })
 
   it('should login', function (done) {
@@ -80,7 +83,7 @@ describe(`User tests (v${VERSION})`, function() {
       })
   })
   it('should not get all users', function(done) {
-    process.env.BYPASS_LOGIN = false
+    process.env.BYPASS_LOGIN = 'false'
     request(app)
       .get(`/v${VERSION}/users`)
       .set('Accept', 'application/json')
@@ -92,6 +95,42 @@ describe(`User tests (v${VERSION})`, function() {
         if (err) return done(err)
         expect(res.body.statusCode).to.equal(403)
         expect(res.body.message).to.equal('Access not permitted')
+        done()
+      })
+  })
+  it('should create user', function(done) {
+    const newUser = {
+      email: `${randomWords()}@test.com`,
+      password: randomWords(),
+      phone: {
+        countryCode: '98',
+        number: '5551212',
+        type: 'Work'
+      },
+      attributes: [
+        {
+          name: 'refName',
+          value: 'example value'
+        }
+      ]
+    }
+    request(app)
+      .post(`/v${VERSION}/users`)
+      .set('Accept', 'application/json')
+      .set('token', token)
+      .send(newUser)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200)
+      .end(async (err, res) => {
+        if (err) return done(err)
+        console.log(res.body)
+        expect(res.body).to.be.equal(newUser)
+        // const user = await models.User.findOne({
+        //   where: {
+        //     email: newUser.email
+        //   }
+        // })
+        // await user.destroy()
         done()
       })
   })
