@@ -26,7 +26,13 @@ module.exports = {
       displayName: {
         type: Sequelize.STRING
       },
+      phoneCountryCode: {
+        type: Sequelize.STRING
+      },
       phone: {
+        type: Sequelize.STRING
+      },
+      phoneType: {
         type: Sequelize.STRING
       },
       attributes: {

@@ -28,7 +28,7 @@ const user = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     phoneCountryCode: {
-      type: sequelize.STRING
+      type: DataTypes.STRING
     },
     phone: {
       type: DataTypes.STRING
